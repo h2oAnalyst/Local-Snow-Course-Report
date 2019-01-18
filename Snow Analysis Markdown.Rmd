@@ -1,0 +1,40 @@
+---
+title: "Local Snow Sensor Analyis Report"
+author: "Ethan James Warren"
+date: "January 11, 2019"
+output: html_document
+---
+
+```{r, echo=FALSE}
+mainDir <- "Y:\\Share\\Water Conditions\\Snow Analysis"
+subDir <- paste(Sys.Date())
+subpath <- paste(mainDir,"\\",subDir,sep="")
+files <- list.files(subpath)
+
+for (i in files) {
+  assign(gsub(".csv","",i), read.csv(paste(subpath,"\\",i,sep=""), header = TRUE))
+}
+
+data_frames <- c("BIG MEADOWS (SCS) (BMW)", "BISHOP PASS (BSH)", "BLACKCAP BASIN (BCB)", "CHARLOTTE LAKE (CRL)", "MITCHELL MEADOW (MTM)", "STATE LAKES (STL)", "UPPER BURNT CORRAL (UBC)", "WEST WOODCHUCK MEADOW (WWC)")
+```
+
+# Local Snow Stations Monthly Report  
+Data aquired from the California Data Exchange Center: [https://cdec.water.ca.gov/](https://cdec.water.ca.gov/)
+
+```{r, echo=FALSE}
+library(ggplot2)
+
+myplot <- function(data, title){
+  ggplot(data, aes(x = as.Date(DATE...TIME..PST., "%m/%d/%Y"), y = SNOW.WC.INCHES)) +
+    geom_line(color="blue") +
+    labs(title = title) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    xlab("Date") +
+    ylab("Snow Water Content (Inches)")
+}
+
+for(i in data_frames){
+  print(myplot(get(i), i))
+}
+
+```
